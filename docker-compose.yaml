@@ -1,0 +1,35 @@
+services:
+
+  calorie_db:
+    image: postgres:15
+    container_name: calorie_db
+    environment:
+      POSTGRES_DB: ${CALORIE_DB}
+      POSTGRES_USER: ${CALORIE_USER}
+      POSTGRES_PASSWORD: ${CALORIE_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "5435:5432"
+    volumes:
+      - calorie_data:/var/lib/postgresql/data
+
+  task_manager_service:
+    image: calorie_service:latest
+    container_name: calorie_service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://calorie_db:5432/${CALORIE_DB}
+      SPRING_DATASOURCE_USERNAME: ${CALORIE_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CALORIE_PASSWORD}
+    depends_on:
+      - calorie_db
+
+volumes:
+  calorie_data:

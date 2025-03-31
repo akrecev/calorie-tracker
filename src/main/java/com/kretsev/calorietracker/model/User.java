@@ -54,6 +54,7 @@ public class User {
     }
 
     @Override
+    @SuppressWarnings("java:S2097")
     public final boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;

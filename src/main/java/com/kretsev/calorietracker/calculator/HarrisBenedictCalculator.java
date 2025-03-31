@@ -1,7 +1,10 @@
 package com.kretsev.calorietracker.calculator;
 
+import com.kretsev.calorietracker.model.Goal;
 import com.kretsev.calorietracker.model.User;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class HarrisBenedictCalculator {
     private static final double ACTIVITY_FACTOR = 1.375;
     private static final double BASE_COEFFICIENT = 88.36;
@@ -25,10 +28,10 @@ public class HarrisBenedictCalculator {
 
         double dailyCalories = bmr * ACTIVITY_FACTOR;
 
-        switch (user.getGoal()) {
-            case WEIGHT_LOSS -> dailyCalories *= WEIGHT_LOSS_COEFFICIENT;
-            case MUSCLE_GAIN -> dailyCalories *= MUSCLE_GAIN_COEFFICIENT;
-            case MAINTENANCE -> {}
+        if (user.getGoal() == Goal.WEIGHT_LOSS) {
+            dailyCalories *= WEIGHT_LOSS_COEFFICIENT;
+        } else if (user.getGoal() == Goal.MUSCLE_GAIN) {
+            dailyCalories *= MUSCLE_GAIN_COEFFICIENT;
         }
 
         return (int) Math.round(dailyCalories);
