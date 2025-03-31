@@ -32,10 +32,10 @@ public class User {
     @Size(max = 150, message = "Некорректный возраст")
     private int age;
 
-    @Size(max = 400, message = "Некорректный вес")
+    @Size(max = 350, message = "Некорректный вес")
     private double weight;
 
-    @Size(max = 300, message = "Некорректный рост")
+    @Size(max = 250, message = "Некорректный рост")
     private double height;
 
     @Column(nullable = false)

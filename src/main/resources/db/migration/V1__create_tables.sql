@@ -3,8 +3,8 @@ CREATE TABLE users (
                        name VARCHAR(255) NOT NULL,
                        email VARCHAR(255) UNIQUE NOT NULL,
                        age INT CHECK (age >= 0 AND age <= 150),
-                       weight DOUBLE PRECISION CHECK (weight > 0 AND weight <= 400),
-                       height DOUBLE PRECISION CHECK (height > 0 AND height <= 300),
+                       weight DOUBLE PRECISION CHECK (weight > 0 AND weight <= 350),
+                       height DOUBLE PRECISION CHECK (height > 0 AND height <= 250),
                        goal VARCHAR(50) NOT NULL DEFAULT 'MAINTENANCE',
                        daily_calorie_norm INT NOT NULL
 );
