@@ -2,8 +2,6 @@ package com.kretsev.calorietracker.model;
 
 import com.kretsev.calorietracker.calculator.HarrisBenedictCalculator;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,17 +23,16 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Email(message = "Некорректный адрес электронной почты")
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Size(max = 150, message = "Некорректный возраст")
+    @Column(nullable = false)
     private int age;
 
-    @Size(max = 350, message = "Некорректный вес")
+    @Column(nullable = false)
     private double weight;
 
-    @Size(max = 250, message = "Некорректный рост")
+    @Column(nullable = false)
     private double height;
 
     @Column(nullable = false)
