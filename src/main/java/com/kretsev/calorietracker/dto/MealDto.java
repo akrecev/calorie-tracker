@@ -8,4 +8,4 @@ import java.util.List;
  * DTO for {@link com.kretsev.calorietracker.model.Meal}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record MealDto(Long id, UserDto user, LocalDateTime mealDate, List<DishDto> dishes) {}
+public record MealDto(Long id, Long userId, LocalDateTime mealDate, List<Long> dishIds) {}
