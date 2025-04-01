@@ -10,5 +10,5 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapper {
     User toEntity(UserDto userDto);
 
-    UserDto toUserDto(User user);
+    UserDto toDto(User user);
 }

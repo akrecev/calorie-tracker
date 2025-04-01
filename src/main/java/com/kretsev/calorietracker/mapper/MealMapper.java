@@ -10,5 +10,5 @@ import org.mapstruct.ReportingPolicy;
 public interface MealMapper {
     Meal toEntity(MealDto mealDto);
 
-    MealDto toMealDto(Meal meal);
+    MealDto toDto(Meal meal);
 }

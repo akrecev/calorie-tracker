@@ -10,5 +10,5 @@ import org.mapstruct.ReportingPolicy;
 public interface DishMapper {
     Dish toEntity(DishDto dishDto);
 
-    DishDto toDishDto(Dish dish);
+    DishDto toDto(Dish dish);
 }

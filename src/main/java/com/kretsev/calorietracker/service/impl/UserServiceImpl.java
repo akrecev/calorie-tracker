@@ -28,17 +28,17 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(userDTO);
         loggingService.logInfo("Пользователь успешно создан: id={}, email={}", user.getId(), user.getEmail());
 
-        return userMapper.toUserDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        return userMapper.toUserDto(getUserInner(id));
+        return userMapper.toDto(getUserInner(id));
     }
 
     @Override
     public Page<UserDto> getAllUsers(int page, int size) {
-        return userRepository.findAll(PageRequest.of(page, size)).map(userMapper::toUserDto);
+        return userRepository.findAll(PageRequest.of(page, size)).map(userMapper::toDto);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         user.setGoal(userDto.goal());
         loggingService.logInfo("Пользователь обновлен: id={}, email={}", user.getId(), user.getEmail());
 
-        return userMapper.toUserDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
