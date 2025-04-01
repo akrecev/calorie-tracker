@@ -1,12 +1,19 @@
 package com.kretsev.calorietracker.service.impl;
 
+import com.kretsev.calorietracker.dto.CalorieCheckDto;
+import com.kretsev.calorietracker.dto.DailyReportDto;
 import com.kretsev.calorietracker.dto.UserDto;
 import com.kretsev.calorietracker.mapper.UserMapper;
+import com.kretsev.calorietracker.model.Dish;
+import com.kretsev.calorietracker.model.Meal;
 import com.kretsev.calorietracker.model.User;
+import com.kretsev.calorietracker.repository.MealRepository;
 import com.kretsev.calorietracker.repository.UserRepository;
 import com.kretsev.calorietracker.service.EntityService;
 import com.kretsev.calorietracker.service.LoggingService;
 import com.kretsev.calorietracker.service.UserService;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final MealRepository mealRepository;
     private final UserMapper userMapper;
     private final EntityService entityService;
     private final LoggingService loggingService;
@@ -39,6 +47,38 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserDto> getAllUsers(int page, int size) {
         return userRepository.findAll(PageRequest.of(page, size)).map(userMapper::toDto);
+    }
+
+    @Override
+    public DailyReportDto getDailyReport(Long userId, LocalDate date) {
+        getUserInner(userId);
+        List<Meal> meals = mealRepository.findByUserIdAndMealDateBetween(
+                userId, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
+
+        int totalCalories = meals.stream()
+                .flatMap(meal -> meal.getDishes().stream())
+                .mapToInt(Dish::getCalories)
+                .sum();
+
+        return new DailyReportDto(date, totalCalories, meals.size());
+    }
+
+    @Override
+    public CalorieCheckDto checkCalorieNorm(Long userId, LocalDate date) {
+        DailyReportDto report = getDailyReport(userId, date);
+        User user = getUserInner(userId);
+
+        boolean withinNorm = report.totalCalories() <= user.getDailyCalorieNorm();
+
+        return new CalorieCheckDto(date, report.totalCalories(), user.getDailyCalorieNorm(), withinNorm);
+    }
+
+    @Override
+    public List<DailyReportDto> getNutritionHistory(Long userId, LocalDate startDate, LocalDate endDate) {
+        return startDate
+                .datesUntil(endDate.plusDays(1))
+                .map(date -> getDailyReport(userId, date))
+                .toList();
     }
 
     @Override
