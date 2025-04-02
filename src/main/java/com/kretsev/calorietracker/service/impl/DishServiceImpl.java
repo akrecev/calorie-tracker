@@ -13,6 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service implementation for managing dishes in the Calorie Tracker application.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -22,6 +25,12 @@ public class DishServiceImpl implements DishService {
     private final EntityService entityService;
     private final LoggingService loggingService;
 
+    /**
+     * Creates a new dish.
+     *
+     * @param dishDto the dish data transfer object containing dish details
+     * @return the created dish DTO
+     */
     @Override
     @Transactional
     public DishDto createDish(DishDto dishDto) {
@@ -31,16 +40,36 @@ public class DishServiceImpl implements DishService {
         return dishMapper.toDto(savedDish);
     }
 
+    /**
+     * Retrieves a dish by its ID.
+     *
+     * @param id the ID of the dish to retrieve
+     * @return the dish DTO
+     */
     @Override
     public DishDto getDishById(Long id) {
         return dishMapper.toDto(getDishInner(id));
     }
 
+    /**
+     * Retrieves a paginated list of all dishes.
+     *
+     * @param page the page number
+     * @param size the number of items per page
+     * @return a page of dish DTOs
+     */
     @Override
     public Page<DishDto> getAllDishes(int page, int size) {
         return dishRepository.findAll(PageRequest.of(page, size)).map(dishMapper::toDto);
     }
 
+    /**
+     * Updates an existing dish.
+     *
+     * @param id the ID of the dish to update
+     * @param dishDto the updated dish data transfer object
+     * @return the updated dish DTO
+     */
     @Override
     @Transactional
     public DishDto updateDish(Long id, DishDto dishDto) {
@@ -54,6 +83,11 @@ public class DishServiceImpl implements DishService {
         return dishMapper.toDto(dishRepository.save(dish));
     }
 
+    /**
+     * Deletes a dish by its ID.
+     *
+     * @param id the ID of the dish to delete
+     */
     @Override
     @Transactional
     public void deleteDish(Long id) {
@@ -62,6 +96,12 @@ public class DishServiceImpl implements DishService {
         loggingService.logInfo("Блюдо удалено: id={}, name={}", dish.getId(), dish.getName());
     }
 
+    /**
+     * Retrieves a dish entity by its ID or throws an exception if not found.
+     *
+     * @param id the ID of the dish
+     * @return the dish entity
+     */
     private Dish getDishInner(Long id) {
         return entityService.findEntityOrElseThrow(dishRepository, id, "Блюдо не найдено");
     }

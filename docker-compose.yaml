@@ -13,6 +13,11 @@ services:
       - "5435:5432"
     volumes:
       - calorie_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${CALORIE_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   task_manager_service:
     image: calorie_service:latest

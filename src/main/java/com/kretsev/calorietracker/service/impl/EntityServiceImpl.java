@@ -15,6 +15,16 @@ import org.springframework.stereotype.Service;
 public class EntityServiceImpl implements EntityService {
     private final LoggingService loggingService;
 
+    /**
+     * Finds an entity by ID or throws an exception if not found.
+     *
+     * @param repository the JPA repository
+     * @param id the entity ID
+     * @param errorMessage the error message to throw
+     * @param <T> the entity type
+     * @param <ID> the ID type
+     * @return the found entity
+     */
     @Override
     @SuppressWarnings("java:S119")
     public <T, ID> T findEntityOrElseThrow(JpaRepository<T, ID> repository, ID id, String errorMessage) {

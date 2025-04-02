@@ -18,6 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service implementation for managing meals in the Calorie Tracker application.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,6 +32,12 @@ public class MealServiceImpl implements MealService {
     private final EntityService entityService;
     private final LoggingService loggingService;
 
+    /**
+     * Creates a new meal.
+     *
+     * @param mealDto the meal data transfer object containing meal details
+     * @return the created meal DTO
+     */
     @Override
     @Transactional
     public MealDto createMeal(MealDto mealDto) {
@@ -45,16 +54,37 @@ public class MealServiceImpl implements MealService {
         return mealMapper.toDto(savedMeal);
     }
 
+    /**
+     * Retrieves a meal by its ID.
+     *
+     * @param id the ID of the meal to retrieve
+     * @return the meal DTO
+     */
     @Override
     public MealDto getMealById(Long id) {
         return mealMapper.toDto(getMealInner(id));
     }
 
+    /**
+     * Retrieves a paginated list of meals for a specific user.
+     *
+     * @param userId the ID of the user
+     * @param page the page number
+     * @param size the number of items per page
+     * @return a page of meal DTOs
+     */
     @Override
     public Page<MealDto> getMealsByUserId(Long userId, int page, int size) {
         return mealRepository.findByUserId(userId, PageRequest.of(page, size)).map(mealMapper::toDto);
     }
 
+    /**
+     * Updates an existing meal.
+     *
+     * @param id the ID of the meal to update
+     * @param mealDto the updated meal data transfer object
+     * @return the updated meal DTO
+     */
     @Override
     @Transactional
     public MealDto updateMeal(Long id, MealDto mealDto) {
@@ -68,6 +98,11 @@ public class MealServiceImpl implements MealService {
         return mealMapper.toDto(mealRepository.save(meal));
     }
 
+    /**
+     * Deletes a meal by its ID.
+     *
+     * @param id the ID of the meal to delete
+     */
     @Override
     @Transactional
     public void deleteMeal(Long id) {
@@ -76,6 +111,12 @@ public class MealServiceImpl implements MealService {
         loggingService.logInfo("Удален приём пищи: id={}", meal.getId());
     }
 
+    /**
+     * Retrieves a meal entity by its ID or throws an exception if not found.
+     *
+     * @param id the ID of the meal
+     * @return the meal entity
+     */
     private Meal getMealInner(Long id) {
         return entityService.findEntityOrElseThrow(mealRepository, id, "Приём пищи не найден");
     }

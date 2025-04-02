@@ -20,6 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service implementation for managing users and their reports in the Calorie Tracker application.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,6 +33,12 @@ public class UserServiceImpl implements UserService {
     private final EntityService entityService;
     private final LoggingService loggingService;
 
+    /**
+     * Creates a new user.
+     *
+     * @param userDTO the user data transfer object containing user details
+     * @return the created user DTO
+     */
     @Override
     @Transactional
     public UserDto createUser(UserDto userDTO) {
@@ -39,16 +48,36 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    /**
+     * Retrieves a user by their ID.
+     *
+     * @param id the ID of the user to retrieve
+     * @return the user DTO
+     */
     @Override
     public UserDto getUserById(Long id) {
         return userMapper.toDto(getUserInner(id));
     }
 
+    /**
+     * Retrieves a paginated list of all users.
+     *
+     * @param page the page number
+     * @param size the number of items per page
+     * @return a page of user DTOs
+     */
     @Override
     public Page<UserDto> getAllUsers(int page, int size) {
         return userRepository.findAll(PageRequest.of(page, size)).map(userMapper::toDto);
     }
 
+    /**
+     * Generates a daily report for a user on a specific date.
+     *
+     * @param userId the ID of the user
+     * @param date the date for the report
+     * @return the daily report DTO
+     */
     @Override
     public DailyReportDto getDailyReport(Long userId, LocalDate date) {
         getUserInner(userId);
@@ -63,6 +92,13 @@ public class UserServiceImpl implements UserService {
         return new DailyReportDto(date, totalCalories, meals.size());
     }
 
+    /**
+     * Checks if a user's calorie intake is within their daily norm for a specific date.
+     *
+     * @param userId the ID of the user
+     * @param date the date to check
+     * @return the calorie check DTO
+     */
     @Override
     public CalorieCheckDto checkCalorieNorm(Long userId, LocalDate date) {
         DailyReportDto report = getDailyReport(userId, date);
@@ -73,6 +109,14 @@ public class UserServiceImpl implements UserService {
         return new CalorieCheckDto(date, report.totalCalories(), user.getDailyCalorieNorm(), withinNorm);
     }
 
+    /**
+     * Retrieves the nutrition history for a user over a date range.
+     *
+     * @param userId the ID of the user
+     * @param startDate the start date of the range
+     * @param endDate the end date of the range
+     * @return a list of daily report DTOs
+     */
     @Override
     public List<DailyReportDto> getNutritionHistory(Long userId, LocalDate startDate, LocalDate endDate) {
         return startDate
@@ -81,6 +125,13 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
+    /**
+     * Updates an existing user.
+     *
+     * @param id the ID of the user to update
+     * @param userDto the updated user data transfer object
+     * @return the updated user DTO
+     */
     @Override
     @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
@@ -96,6 +147,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    /**
+     * Deletes a user by their ID.
+     *
+     * @param id the ID of the user to delete
+     */
     @Override
     @Transactional
     public void deleteUser(Long id) {
@@ -104,6 +160,12 @@ public class UserServiceImpl implements UserService {
         loggingService.logInfo("Пользователь удален: id={}, email={}", user.getId(), user.getEmail());
     }
 
+    /**
+     * Retrieves a user entity by its ID or throws an exception if not found.
+     *
+     * @param id the ID of the user
+     * @return the user entity
+     */
     private User getUserInner(Long id) {
         return entityService.findEntityOrElseThrow(userRepository, id, "Пользователь не найден");
     }
